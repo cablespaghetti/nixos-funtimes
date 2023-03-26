@@ -28,7 +28,7 @@ write_files:
   content: |
     {config, pkgs, ...}:
     {
-      environment.systemPackages = with pkgs; [ neofetch vim ];
+      environment.systemPackages = with pkgs; [ neofetch vim tmux htop ];
       users.users.${var.username} = {
         isNormalUser = true;
         extraGroups = [ "wheel" ];
@@ -36,6 +36,12 @@ write_files:
           "${var.ssh_key}"
         ];
       };
+      security.sudo.extraRules = [
+        {
+          groups = [ "wheel" ];
+          commands = [ { command = "ALL"; options = [ "NOPASSWD" ]; } ];
+        }
+      ];
     }
 runcmd:
   # "Fix" nixos-infect choking on all the nonsense Scaleway injects into authorized_keys
