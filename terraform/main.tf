@@ -38,8 +38,10 @@ write_files:
       };
     }
 runcmd:
+  # "Fix" nixos-infect choking on all the nonsense Scaleway injects into authorized_keys
   - rm /root/.ssh/authorized_keys
   - rm /home/ubuntu/.ssh/authorized_keys
+  # Actually do some infecting...
   - curl https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect | NIXOS_IMPORT=./host.nix NIX_CHANNEL=nixos-22.11 bash 2>&1 | tee /tmp/infect.log
 EOF
   }
