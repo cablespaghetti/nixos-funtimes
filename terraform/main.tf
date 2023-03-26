@@ -42,13 +42,27 @@ write_files:
           commands = [ { command = "ALL"; options = [ "NOPASSWD" ]; } ];
         }
       ];
+      networking.interfaces.ens2.ipv6 = {
+        addresses = [{
+          address = "$${IPV6_GATEWAY}1";
+          prefixLength = 64;
+        }];
+        routes = [{
+            address = "::";
+            prefixLength = 0;
+            via = "$${IPV6_GATEWAY}";
+        }];
+      };
     }
 runcmd:
   # "Fix" nixos-infect choking on all the nonsense Scaleway injects into authorized_keys
   - rm /root/.ssh/authorized_keys
   - rm /home/ubuntu/.ssh/authorized_keys
+  # Shenanigans to get IPV6 Config
+  - export IPV6_GATEWAY=$(curl http://169.254.42.42/conf | grep IPV6_GATEWAY | cut -d'=' -f2)
+  - envsubst '$IPV6_GATEWAY' < /etc/nixos/host.nix > /etc/nixos/host_ipv6.nix
   # Actually do some infecting...
-  - curl https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect | NIXOS_IMPORT=./host.nix NIX_CHANNEL=nixos-22.11 bash 2>&1 | tee /tmp/infect.log
+  - curl https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect | NIXOS_IMPORT=./host_ipv6.nix NIX_CHANNEL=nixos-22.11 bash 2>&1 | tee /tmp/infect.log
 EOF
   }
 }
