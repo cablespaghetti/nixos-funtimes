@@ -14,7 +14,7 @@ resource "scaleway_instance_server" "web" {
 
   root_volume {
     size_in_gb  = var.volume_size
-    volume_type = "b_ssd"
+    volume_type = var.volume_type
   }
 
   security_group_id = scaleway_instance_security_group.web.id
@@ -42,16 +42,17 @@ write_files:
           commands = [ { command = "ALL"; options = [ "NOPASSWD" ]; } ];
         }
       ];
-      networking.interfaces.ens2.ipv6 = {
-        addresses = [{
-          address = "$${IPV6_GATEWAY}1";
-          prefixLength = 64;
-        }];
-        routes = [{
-            address = "::";
-            prefixLength = 0;
-            via = "$${IPV6_GATEWAY}";
-        }];
+      networking = {
+        defaultGateway6 = {
+          address = "$${IPV6_GATEWAY}";
+          interface = "ens2";
+        };
+        interfaces.ens2.ipv6 = {
+          addresses = [{
+            address = "$${IPV6_GATEWAY}1";
+            prefixLength = 64;
+          }];
+        };
       };
     }
 runcmd:

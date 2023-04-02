@@ -6,13 +6,19 @@ variable "project_id" {
 variable "instance_type" {
   type        = string
   description = "The Scaleway instance type to use"
-  default     = "PLAY2-PICO"
+  default     = "STARDUST1-S"
 }
 
 variable "volume_size" {
   type        = number
   description = "The size of the root volume in GiB"
-  default     = 20
+  default     = 10
+}
+
+variable "volume_type" {
+  type        = string
+  description = "The type of the root volume (l_ssd or b_ssd)"
+  default     = "l_ssd"
 }
 
 variable "username" {
