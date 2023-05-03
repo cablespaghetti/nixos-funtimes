@@ -1,5 +1,4 @@
-{pkgs, ...}:
-{
+{ pkgs, ... }: {
   # Install tailscale and fiddle with networking as required
   networking.firewall.checkReversePath = "loose";
   #boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
